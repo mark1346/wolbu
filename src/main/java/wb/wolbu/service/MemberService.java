@@ -85,7 +85,7 @@ public class MemberService implements UserDetailsService {
             throw new BusinessLogicException("현재 비밀번호가 일치하지 않습니다.");
         }
         if (!PasswordValidator.isValid(newPassword)) {
-            throw new BusinessLogicException("새 비밀번호가 유효하지 않습니다.");
+            throw new BusinessLogicException("비밀번호는 6자 이상 10자 이하이며, 영문 소문자, 대문자, 숫자 중 최소 두 가지 이상을 조합해야 합니다.");
         }
         member.changePassword(passwordEncoder.encode(newPassword));
         memberRepository.save(member);

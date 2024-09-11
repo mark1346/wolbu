@@ -66,4 +66,11 @@ public class Member {
         this.enrollments.add(enrollment);
         enrollment.setStudent(this);
     }
+
+    // 업데이트 메서드
+    public void updateInfo(String name, String phoneNumber, MemberType memberType) {
+        this.name = name;
+        this.phoneNumber = phoneNumber;
+        this.memberType = memberType;
+    }
 }

@@ -21,6 +21,9 @@ public class Member {
     private String name;
 
     @Column(nullable = false, unique = true)
+    private String email;
+
+    @Column(nullable = false, unique = true)
     private String phoneNumber;
 
     @Column(nullable = false)
@@ -38,8 +41,9 @@ public class Member {
     @OneToMany(mappedBy = "student")
     private Set<Enrollment> enrollments = new HashSet<>();
 
-    public Member(String name, String phoneNumber, String password, MemberType memberType) {
+    public Member(String name, String email, String phoneNumber, String password, MemberType memberType) {
         this.name = name;
+        this.email = email;
         this.phoneNumber = phoneNumber;
         this.password = password;
         this.memberType = memberType;

@@ -24,7 +24,7 @@ public class EnrollmentService {
     private final CourseRepository courseRepository;
     private final MemberRepository memberRepository;
 
-    public void enrollCourse(Long studentId, Long courseId) {
+    public Enrollment enrollCourse(Long studentId, Long courseId) {
         Member student = memberRepository.findById(studentId)
                 .orElseThrow(() -> new EntityNotFoundException("해당 학생을 찾을 수 없습니다. id=" + studentId));
 
@@ -49,7 +49,7 @@ public class EnrollmentService {
                 enrollmentRepository.save(enrollment);
                 courseRepository.save(course);
 
-                return; // 성공하면 메소드 종료!
+                return enrollment; // 성공하면 메소드 종료!
             } catch (OptimisticLockException e) {
                 retryCount++;
                 if (retryCount >= maxRetry) {
@@ -66,7 +66,7 @@ public class EnrollmentService {
         }
     }
 
-    public void cancelEnrollment(Long studentId, Long courseId) {
+    public Enrollment cancelEnrollment(Long studentId, Long courseId) {
         Member student = memberRepository.findById(studentId)
                 .orElseThrow(() -> new EntityNotFoundException("해당 학생을 찾을 수 없습니다. id=" + studentId));
 
@@ -78,6 +78,8 @@ public class EnrollmentService {
 
         course.removeEnrollment(enrollment);
         enrollmentRepository.delete(enrollment);
+
+        return enrollment;
     }
 
     @Transactional(readOnly = true)

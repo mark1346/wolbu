@@ -6,6 +6,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import wb.wolbu.entity.Course;
+import wb.wolbu.entity.Member;
+
+import java.util.List;
 
 @Repository
 public interface CourseRepository extends JpaRepository<Course, Long> {
@@ -18,4 +21,6 @@ public interface CourseRepository extends JpaRepository<Course, Long> {
     // 강의를 신청률 높은 순으로 정렬
     @Query("SELECT c FROM Course c ORDER BY (c.currentEnrollmentCount * 1.0 / c.maxStudents) DESC")
     Page<Course> findAllOrderByEnrollmentRateDesc(Pageable pageable);
+
+    List<Course> findByInstructor(Member instructor);
 }

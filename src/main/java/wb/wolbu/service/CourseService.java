@@ -28,48 +28,6 @@ public class CourseService {
     private final MemberRepository memberRepository;
     private final EnrollmentRepository enrollmentRepository;
 
-    public void enrollCourse(Long studentId, Long courseId) {
-        Member student = memberRepository.findById(studentId)
-                .orElseThrow(() -> new EntityNotFoundException("해당 학생을 찾을 수 없습니다. id=" + studentId));
-
-        int maxRetry = 3; // 최대 재시도 횟수
-        int retryCount = 0; // 현재 재시도 횟수
-
-        while (retryCount < maxRetry) {
-            try {
-                Course course = courseRepository.findById(courseId)
-                        .orElseThrow(() -> new EntityNotFoundException("해당 강좌를 찾을 수 없습니다. id=" + courseId));
-
-                if (enrollmentRepository.findByStudentAndCourse(student, course).isPresent()) {
-                    throw new BusinessLogicException("이미 수강 중인 강좌입니다.");
-                }
-
-                if (!course.canEnroll()) {
-                    throw new BusinessLogicException("수강 신청 인원이 꽉 찼습니다.");
-                }
-
-                Enrollment enrollment = new Enrollment(student, course);
-                course.addEnrollment(enrollment);
-                enrollmentRepository.save(enrollment);
-                courseRepository.save(course);
-
-                return; // 성공하면 메소드 종료!
-            } catch (OptimisticLockException e) {
-                retryCount++;
-                if (retryCount >= maxRetry) {
-                    throw new BusinessLogicException("수강 신청 처리 중 반복적인 충돌이 발생했습니다. 잠시 후 다시 시도해주세요.");
-                }
-                // 짧은 대기시간 추가
-                try {
-                    Thread.sleep(100 * retryCount);
-                } catch (InterruptedException ie) {
-                    Thread.currentThread().interrupt();
-                    throw new BusinessLogicException("수간 신청 처리가 중단되었습니다. ");
-                }
-            }
-        }
-    }
-
     public Course createCourse(Long instructorId, String name, Integer maxStudents, Integer price) {
         Member instructor = memberRepository.findById(instructorId)
                 .orElseThrow(() -> new EntityNotFoundException("해당 강사를 찾을 수 없습니다. id=" + instructorId));

@@ -72,4 +72,9 @@ public class Course {
     public void setInstructor(Member instructor) {
         this.instructor = instructor;
     }
+
+    public void removeEnrollment(Enrollment enrollment) {
+        this.enrollments.remove(enrollment);
+        this.currentEnrollmentCount--;
+    }
 }

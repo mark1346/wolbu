@@ -3,12 +3,16 @@ package wb.wolbu.exception;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 import wb.wolbu.exception.custom.BusinessLogicException;
 import wb.wolbu.exception.custom.InvalidInputException;
 import wb.wolbu.exception.custom.ResourceNotFoundException;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @RestControllerAdvice
 @Slf4j
@@ -45,6 +49,19 @@ public class GlobalExceptionHandler {
                 HttpStatus.BAD_REQUEST.value(),
                 "Bad Request",
                 ex.getMessage(),
+                request.getDescription(false)
+        );
+        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<ErrorResponse> handleMethodArgumentNotValid(MethodArgumentNotValidException ex, WebRequest request) {
+        log.error("MethodArgumentNotValidException : ", ex);
+
+        ErrorResponse errorResponse = new ErrorResponse(
+                HttpStatus.BAD_REQUEST.value(),
+                "Validation Failed",
+                "입력감 검증에 실패했습니다.",
                 request.getDescription(false)
         );
         return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);

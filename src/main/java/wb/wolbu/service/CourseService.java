@@ -7,6 +7,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import wb.wolbu.dto.UpdateCourseRequest;
 import wb.wolbu.entity.Course;
 import wb.wolbu.entity.Enrollment;
 import wb.wolbu.entity.Member;
@@ -116,5 +117,22 @@ public class CourseService {
         return enrollments.stream()
                 .map(Enrollment::getCourse)
                 .toList();
+    }
+
+    public Course updateCourse(Long courseId, UpdateCourseRequest request) {
+        Course course = courseRepository.findById(courseId)
+                .orElseThrow(() -> new EntityNotFoundException("해당 강좌를 찾을 수 없습니다. id=" + courseId));
+
+        // TODO: 권한 체크 필요
+
+        course.update(request.getName(), request.getMaxStudents(), request.getPrice());
+        return courseRepository.save(course);
+    }
+
+    public void deleteCourse(Long courseId) {
+        Course course = courseRepository.findById(courseId)
+                .orElseThrow(() -> new EntityNotFoundException("해당 강좌를 찾을 수 없습니다. id=" + courseId));
+        // TODO: 권한 체크 필요
+        courseRepository.delete(course);
     }
 }

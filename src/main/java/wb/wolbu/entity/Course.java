@@ -51,6 +51,12 @@ public class Course {
         this.createdAt = LocalDateTime.now();
     }
 
+    public void update(String name, Integer maxStudents, Integer price) {
+        this.name = name;
+        this.maxStudents = maxStudents;
+        this.price = price;
+    }
+
     public boolean canEnroll() {
         return this.currentEnrollmentCount < this.maxStudents;
     }

@@ -8,7 +8,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import wb.wolbu.dto.MemberDTO;
 import wb.wolbu.dto.PasswordChangeDTO;
-import wb.wolbu.dto.PasswordChangeDto;
 import wb.wolbu.entity.Member;
 import wb.wolbu.entity.MemberType;
 import wb.wolbu.service.MemberService;

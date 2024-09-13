@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("api/enrollments")
+@RequestMapping("/api/enrollments")
 @RequiredArgsConstructor
 public class EnrollmentController {
 

@@ -31,7 +31,7 @@ public class EnrollmentService {
         int maxRetry = 3; // 최대 재시도 횟수
         int retryCount = 0; // 현재 재시도 횟수
 
-        while (retryCount < maxRetry) {
+        while (true) {
             try {
                 Course course = courseRepository.findById(courseId)
                         .orElseThrow(() -> new EntityNotFoundException("해당 강좌를 찾을 수 없습니다. id=" + courseId));
@@ -64,8 +64,6 @@ public class EnrollmentService {
                 }
             }
         }
-        // 최대 재시도 횟수를 초과했을 때. 흠 컴파일 오륜가?
-        throw new BusinessLogicException("수강 신청 처리에 실패했습니다. 잠시 후에 다시 시도해주세요");
     }
 
     public Enrollment cancelEnrollment(Long studentId, Long courseId) {

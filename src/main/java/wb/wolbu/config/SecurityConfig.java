@@ -13,6 +13,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import wb.wolbu.entity.MemberType;
 
 @Configuration
 @EnableWebSecurity
@@ -30,8 +31,8 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers("/api/members/register").permitAll()
                         .requestMatchers("/api/courses").permitAll()
-                        .requestMatchers("/api/courses/register").hasRole("INSTRUCTOR")
-                        .requestMatchers("/api/enrollments/**").hasAnyRole("STUDENT", "INSTRUCTOR")
+                        .requestMatchers("/api/courses/register").hasAuthority(MemberType.INSTRUCTOR.getRole())
+                        .requestMatchers("/api/enrollments/**").hasAnyAuthority(MemberType.STUDENT.getRole(), MemberType.INSTRUCTOR.getRole())
                         .anyRequest().authenticated()
                 )
                 .csrf(AbstractHttpConfigurer::disable)

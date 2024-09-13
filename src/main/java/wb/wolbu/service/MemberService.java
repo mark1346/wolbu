@@ -50,7 +50,7 @@ public class MemberService implements UserDetailsService {
             return org.springframework.security.core.userdetails.User.builder()
                     .username(member.getEmail())
                     .password(member.getPassword())
-                    .roles(member.getMemberType().name())
+                    .roles(member.getMemberType().getRole())
                     .build();
         } catch (EntityNotFoundException e) {
             throw new UsernameNotFoundException("사용자를 찾을 수 없습니다: " + email);

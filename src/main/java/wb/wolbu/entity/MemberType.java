@@ -1,5 +1,9 @@
 package wb.wolbu.entity;
 
 public enum MemberType {
-    STUDENT, INSTRUCTOR
+    STUDENT, INSTRUCTOR;
+
+    public String getRole() {
+        return "ROLE_" + this.name();
+    }
 }

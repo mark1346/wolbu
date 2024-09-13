@@ -32,6 +32,7 @@ public class SecurityConfig {
                         .requestMatchers("/h2/**").permitAll()
                         .requestMatchers("/api/members/register").permitAll()
                         .requestMatchers("/api/courses").permitAll()
+                        .requestMatchers("/api/courses/**").permitAll()
                         .requestMatchers("/api/courses/register").hasAuthority(MemberType.INSTRUCTOR.getRole())
                         .requestMatchers("/api/enrollments/**").hasAnyAuthority(MemberType.STUDENT.getRole(), MemberType.INSTRUCTOR.getRole())
                         .anyRequest().authenticated()

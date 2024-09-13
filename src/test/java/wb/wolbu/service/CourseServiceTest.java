@@ -19,7 +19,6 @@ import wb.wolbu.repository.CourseRepository;
 import wb.wolbu.repository.EnrollmentRepository;
 import wb.wolbu.repository.MemberRepository;
 
-import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -54,7 +53,7 @@ public class CourseServiceTest {
                 "markymark331@gmail.com",
                 "01012345678",
                 "Password1!",
-                MemberType.INSTURUCTOR);
+                MemberType.INSTRUCTOR);
 
         course = new Course(
                 "Test Course",

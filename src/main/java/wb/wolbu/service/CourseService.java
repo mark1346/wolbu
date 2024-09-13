@@ -31,7 +31,7 @@ public class CourseService {
         Member instructor = memberRepository.findById(instructorId)
                 .orElseThrow(() -> new EntityNotFoundException("해당 강사를 찾을 수 없습니다. id=" + instructorId));
 
-        if (instructor.getMemberType() != MemberType.INSTURUCTOR){
+        if (instructor.getMemberType() != MemberType.INSTRUCTOR){
             throw new BusinessLogicException("강사만 강좌를 생성할 수 있습니다.");
         }
 

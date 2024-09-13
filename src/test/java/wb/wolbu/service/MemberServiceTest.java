@@ -161,7 +161,7 @@ public class MemberServiceTest {
         Long id = 1L;
         String updatedName = "Updated Name";
         String updatedPhoneNumber = "01098765432";
-        MemberType updatedMemberType = MemberType.INSTURUCTOR;
+        MemberType updatedMemberType = MemberType.INSTRUCTOR;
         Member member = new Member(name, email, phoneNumber, password, memberType);
         given(memberRepository.findById(id)).willReturn(java.util.Optional.of(member));
         given(memberRepository.save(any(Member.class))).willAnswer(invocation -> invocation.getArgument(0));

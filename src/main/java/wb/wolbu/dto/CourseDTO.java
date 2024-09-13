@@ -1,17 +1,14 @@
 package wb.wolbu.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import wb.wolbu.entity.Course;
 
 import java.time.LocalDateTime;
 
 @Getter
-@Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class CourseDTO {
     private Long id;
     private String name;
@@ -22,14 +19,14 @@ public class CourseDTO {
     private LocalDateTime createdAt;
 
     public static CourseDTO from(Course course) {
-        return new CourseDTO(
-                course.getId(),
-                course.getName(),
-                course.getMaxStudents(),
-                course.getPrice(),
-                course.getCurrentEnrollmentCount(),
-                course.getInstructor().getName(),
-                course.getCreatedAt()
-        );
+        return CourseDTO.builder()
+                .id(course.getId())
+                .name(course.getName())
+                .maxStudents(course.getMaxStudents())
+                .price(course.getPrice())
+                .currentEnrollmentCount(course.getCurrentEnrollmentCount())
+                .instructorName(course.getInstructor().getName())
+                .createdAt(course.getCreatedAt())
+                .build();
     }
 }

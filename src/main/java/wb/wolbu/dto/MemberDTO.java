@@ -3,16 +3,13 @@ package wb.wolbu.dto;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import wb.wolbu.entity.Member;
 
 @Getter
-@Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class MemberDTO {
     private Long id;
 
@@ -35,13 +32,12 @@ public class MemberDTO {
 
     // Member -> MemberDTO
     public static MemberDTO from(Member member) {
-        return new MemberDTO(
-                member.getId(),
-                member.getName(),
-                member.getEmail(),
-                member.getPhoneNumber(),
-                "", // 보안상 비밀번호는 반환하지 않습니다.
-                member.getMemberType().name()
-        );
+        return MemberDTO.builder()
+                .id(member.getId())
+                .name(member.getName())
+                .email(member.getEmail())
+                .phoneNumber(member.getPhoneNumber())
+                .memberType(member.getMemberType().name())
+                .build();
     }
 }

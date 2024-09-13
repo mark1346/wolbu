@@ -1,6 +1,7 @@
 package wb.wolbu.dto;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import wb.wolbu.entity.Enrollment;
@@ -10,6 +11,7 @@ import java.time.LocalDateTime;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class EnrollmentDTO {
     private Long id;
     private Long studentId;
@@ -19,13 +21,13 @@ public class EnrollmentDTO {
     private LocalDateTime enrollmentDate;
 
     public static EnrollmentDTO from(Enrollment enrollment) {
-        return new EnrollmentDTO(
-                enrollment.getId(),
-                enrollment.getStudent().getId(),
-                enrollment.getStudent().getName(),
-                enrollment.getCourse().getId(),
-                enrollment.getCourse().getName(),
-                enrollment.getEnrollmentDate()
-        );
+        return EnrollmentDTO.builder()
+                .id(enrollment.getId())
+                .studentId(enrollment.getStudent().getId())
+                .studentName(enrollment.getStudent().getName())
+                .courseId(enrollment.getCourse().getId())
+                .courseName(enrollment.getCourse().getName())
+                .enrollmentDate(enrollment.getEnrollmentDate())
+                .build();
     }
 }

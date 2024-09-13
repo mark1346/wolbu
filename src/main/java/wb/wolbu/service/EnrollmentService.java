@@ -60,10 +60,12 @@ public class EnrollmentService {
                     Thread.sleep(100 * retryCount);
                 } catch (InterruptedException ie) {
                     Thread.currentThread().interrupt();
-                    throw new BusinessLogicException("수간 신청 처리가 중단되었습니다. ");
+                    throw new BusinessLogicException("수간 신청 처리가 중단되었습니다.");
                 }
             }
         }
+        // 최대 재시도 횟수를 초과했을 때. 흠 컴파일 오륜가?
+        throw new BusinessLogicException("수강 신청 처리에 실패했습니다. 잠시 후에 다시 시도해주세요");
     }
 
     public Enrollment cancelEnrollment(Long studentId, Long courseId) {

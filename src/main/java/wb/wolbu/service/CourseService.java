@@ -1,7 +1,6 @@
 package wb.wolbu.service;
 
 import jakarta.persistence.EntityNotFoundException;
-import jakarta.persistence.OptimisticLockException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -32,7 +31,7 @@ public class CourseService {
         Member instructor = memberRepository.findById(instructorId)
                 .orElseThrow(() -> new EntityNotFoundException("해당 강사를 찾을 수 없습니다. id=" + instructorId));
 
-        if (instructor.getMemberType() != MemberType.INSTURCTOR){
+        if (instructor.getMemberType() != MemberType.INSTURUCTOR){
             throw new BusinessLogicException("강사만 강좌를 생성할 수 있습니다.");
         }
 

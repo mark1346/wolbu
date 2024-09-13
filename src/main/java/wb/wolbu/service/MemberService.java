@@ -18,11 +18,11 @@ import wb.wolbu.util.PasswordValidator;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class MemberService implements UserDetailsService {
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
 
-    @Transactional
     public Member registerMember(String name, String email, String phoneNumber, String password, MemberType memberType) {
         if (!PasswordValidator.isValid(password)) {
             throw new BusinessLogicException("비밀번호는 6자 이상 10자 이하이며, 영문 소문자, 대문자, 숫자 중 최소 두 가지 이상을 조합해야 합니다.");
@@ -71,14 +71,12 @@ public class MemberService implements UserDetailsService {
     }
 
     // Update 기능
-    @Transactional
     public Member updateMember(Long id, String name, String phoneNumber, MemberType memberType) {
         Member member = findMemberById(id);
         member.updateInfo(name, phoneNumber, memberType);
         return memberRepository.save(member);
     }
 
-    @Transactional
     public void changePassword(Long id, String currentPassword, String newPassword) {
         Member member = findMemberById(id);
         if (!passwordEncoder.matches(currentPassword, member.getPassword())) {
@@ -92,7 +90,6 @@ public class MemberService implements UserDetailsService {
     }
 
     // Delete 기능
-    @Transactional
     public void deleteMember(Long id) {
         if (!memberRepository.existsById(id)) {
             throw new EntityNotFoundException("회원을 찾을 수 없습니다. ID: " + id);

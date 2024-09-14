@@ -35,6 +35,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/courses/**").permitAll()
                         .requestMatchers("/api/courses/register").hasAuthority(MemberType.INSTRUCTOR.getRole())
                         .requestMatchers("/api/enrollments/**").hasAnyAuthority(MemberType.STUDENT.getRole(), MemberType.INSTRUCTOR.getRole())
+                        .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html").permitAll()
                         .anyRequest().authenticated()
                 )
                 .csrf(AbstractHttpConfigurer::disable)

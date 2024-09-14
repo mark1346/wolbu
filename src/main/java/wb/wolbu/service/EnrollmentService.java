@@ -40,9 +40,9 @@ public class EnrollmentService {
                     throw new BusinessLogicException("이미 수강 중인 강좌입니다.");
                 }
 
-                if (!course.canEnroll()) {
-                    throw new BusinessLogicException("수강 신청 인원이 꽉 찼습니다.");
-                }
+//                if (!course.canEnroll()) {
+//                    throw new BusinessLogicException("수강 신청 인원이 꽉 찼습니다.");
+//                }
 
                 Enrollment enrollment = new Enrollment(student, course);
                 course.addEnrollment(enrollment);

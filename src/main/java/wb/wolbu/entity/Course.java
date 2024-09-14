@@ -65,6 +65,7 @@ public class Course {
         if (!canEnroll()) {
             throw new BusinessLogicException("수강 신청 인원이 꽉 찼습니다.");
         }
+        System.out.println("호잇! addEnrollment");
         this.enrollments.add(enrollment);
         this.currentEnrollmentCount++;
     }

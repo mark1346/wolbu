@@ -29,51 +29,32 @@ public class EnrollmentService {
 
     @Transactional
     public Enrollment enrollCourse(Long studentId, Long courseId) {
-        int maxRetries = 10;
-        int retryCount = 0;
+        try {
+            Member student = memberRepository.findById(studentId)
+                    .orElseThrow(() -> new EntityNotFoundException("해당 학생을 찾을 수 없습니다. id=" + studentId));
 
-        while (retryCount < maxRetries) {
-            try {
-                return enrollCourseInternal(studentId, courseId);
-            } catch (Exception e) {
-                retryCount++;
-                if (retryCount >= maxRetries) {
-                    throw new BusinessLogicException("수강 신청 중 충돌이 발생했습니다. 잠시 후 다시 시도해주세요.");
-                }
-                try {
-                    Thread.sleep((long) (Math.random() * 100) + 50);
-                } catch (InterruptedException ie) {
-                    Thread.currentThread().interrupt();
-                    throw new BusinessLogicException("수강 신청이 중단되었습니다.");
-                }
+            Course course = courseRepository.findByIdWithPessimisticLock(courseId)
+                    .orElseThrow(() -> new EntityNotFoundException("해당 강좌를 찾을 수 없습니다. id=" + courseId));
+
+            if (enrollmentRepository.findByStudentAndCourse(student, course).isPresent()) {
+                throw new BusinessLogicException("이미 수강 중인 강좌입니다.");
             }
+
+            if (!course.canEnroll()) {
+                throw new BusinessLogicException("수강 신청 인원이 꽉 찼습니다.");
+            }
+
+            Enrollment enrollment = new Enrollment(student, course);
+            course.addEnrollment(enrollment);
+            enrollmentRepository.save(enrollment);
+            courseRepository.save(course);
+
+            return enrollment;
+
+        } catch (Exception e) {
+            System.out.println("This is e: "+e.getMessage());
+            throw e;
         }
-        throw new BusinessLogicException("수강 신청 처리 중 오류가 발생했습니다.");
-    }
-
-    @Transactional(isolation = Isolation.SERIALIZABLE)
-    public Enrollment enrollCourseInternal(Long studentId, Long courseId) {
-        Member student = memberRepository.findById(studentId)
-                .orElseThrow(() -> new EntityNotFoundException("해당 학생을 찾을 수 없습니다. id=" + studentId));
-
-        Course course = courseRepository.findByIdWithPessimisticLock(courseId)
-                .orElseThrow(() -> new EntityNotFoundException("해당 강좌를 찾을 수 없습니다. id=" + courseId));
-
-
-        if (enrollmentRepository.findByStudentAndCourse(student, course).isPresent()) {
-            throw new BusinessLogicException("이미 수강 중인 강좌입니다.");
-        }
-
-        if (!course.canEnroll()) {
-            throw new BusinessLogicException("수강 신청 인원이 꽉 찼습니다.");
-        }
-
-        Enrollment enrollment = new Enrollment(student, course);
-        course.addEnrollment(enrollment);
-        enrollmentRepository.save(enrollment);
-        courseRepository.save(course);
-
-        return enrollment;
     }
 
     public Enrollment cancelEnrollment(Long studentId, Long courseId) {

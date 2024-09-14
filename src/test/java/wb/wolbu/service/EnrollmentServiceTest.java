@@ -1,6 +1,7 @@
 package wb.wolbu.service;
 
 import jakarta.persistence.OptimisticLockException;
+import jakarta.persistence.PessimisticLockException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -73,7 +74,7 @@ public class EnrollmentServiceTest {
     void enrollCourse_WithValidInput_ShouldEnrollSuccessfully() {
         // given
         given(memberRepository.findById(1L)).willReturn(Optional.of(student));
-        given(courseRepository.findById(1L)).willReturn(Optional.of(course));
+        given(courseRepository.findByIdWithPessimisticLock(1L)).willReturn(Optional.of(course));
         given(enrollmentRepository.findByStudentAndCourse(student, course)).willReturn(Optional.empty());
         given(enrollmentRepository.save(any(Enrollment.class))).willReturn(enrollment);
 
@@ -93,7 +94,7 @@ public class EnrollmentServiceTest {
     void enrollCourse_WithAlreadyEnrolledCourse_ShouldThrowException() {
         // given
         given(memberRepository.findById(1L)).willReturn(Optional.of(student));
-        given(courseRepository.findById(1L)).willReturn(Optional.of(course));
+        given(courseRepository.findByIdWithPessimisticLock(1L)).willReturn(Optional.of(course));
         given(enrollmentRepository.findByStudentAndCourse(student, course)).willReturn(Optional.of(enrollment));
 
         // when & then
@@ -110,7 +111,7 @@ public class EnrollmentServiceTest {
         fullCourse.addEnrollment(new Enrollment(new Member("Other Student", "other@example.com", "01011112222", "password", MemberType.STUDENT), fullCourse));
 
         given(memberRepository.findById(1L)).willReturn(Optional.of(student));
-        given(courseRepository.findById(1L)).willReturn(Optional.of(fullCourse));
+        given(courseRepository.findByIdWithPessimisticLock(1L)).willReturn(Optional.of(fullCourse));
         given(enrollmentRepository.findByStudentAndCourse(student, fullCourse)).willReturn(Optional.empty());
 
         // when & then
@@ -119,47 +120,6 @@ public class EnrollmentServiceTest {
                 .hasMessageContaining("수강 신청 인원이 꽉 찼습니다.");
     }
 
-    @Test
-    @DisplayName("수강 신청 - 동시성 문제 발생 시 재시도")
-    void enrollCourse_WithConcurrencyIssue_ShouldRetryAndSucceed() {
-        // given
-        given(memberRepository.findById(1L)).willReturn(Optional.of(student));
-        given(courseRepository.findById(1L))
-                .willReturn(Optional.of(course))
-                .willReturn(Optional.of(course));
-        given(enrollmentRepository.findByStudentAndCourse(student, course))
-                .willReturn(Optional.empty())
-                .willReturn(Optional.empty());
-        given(enrollmentRepository.save(any(Enrollment.class)))
-                .willThrow(OptimisticLockException.class)
-                .willReturn(enrollment);
-
-        // when
-        Enrollment result = enrollmentService.enrollCourse(1L, 1L);
-
-        // then
-        assertThat(result).isNotNull();
-        verify(courseRepository, times(2)).findById(1L);
-        verify(enrollmentRepository, times(2)).findByStudentAndCourse(student, course);
-        verify(enrollmentRepository, times(2)).save(any(Enrollment.class));
-    }
-
-    @Test
-    @DisplayName("수강 신청 - 동시성 문제로 인한 최대 재시도 초과")
-    void enrollCourse_WithPersistentConcurrencyIssue_ShouldThrowException() {
-        // given
-        given(memberRepository.findById(1L)).willReturn(Optional.of(student));
-        given(courseRepository.findById(1L)).willReturn(Optional.of(course));
-        given(enrollmentRepository.findByStudentAndCourse(student, course)).willReturn(Optional.empty());
-        given(enrollmentRepository.save(any(Enrollment.class))).willThrow(OptimisticLockException.class);
-
-        // when & then
-        assertThatThrownBy(() -> enrollmentService.enrollCourse(1L, 1L))
-                .isInstanceOf(BusinessLogicException.class)
-                .hasMessageContaining("수강 신청 처리 중 반복적인 충돌이 발생했습니다. 잠시 후 다시 시도해주세요.");
-
-        verify(enrollmentRepository, times(3)).save(any(Enrollment.class));
-    }
 
     @Test
     @DisplayName("수강 취소 - 정상적인 경우")

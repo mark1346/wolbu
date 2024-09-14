@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import wb.wolbu.dto.EnrollmentResult;
 import wb.wolbu.entity.Course;
 import wb.wolbu.entity.Enrollment;
 import wb.wolbu.entity.Member;
@@ -16,6 +17,7 @@ import wb.wolbu.repository.CourseRepository;
 import wb.wolbu.repository.EnrollmentRepository;
 import wb.wolbu.repository.MemberRepository;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -55,6 +57,24 @@ public class EnrollmentService {
             System.out.println("This is e: "+e.getMessage());
             throw e;
         }
+    }
+
+    public List<EnrollmentResult> enrollMultipleCourses(Long studentId, List<Long> courseIds) {
+        Member student = memberRepository.findById(studentId)
+                .orElseThrow(() -> new EntityNotFoundException("해당 학생을 찾을 수 없습니다. id=" + studentId));
+
+        List<EnrollmentResult> results = new ArrayList<>();
+
+        for (Long courseId : courseIds){
+            try {
+                Enrollment enrollment = enrollCourse(studentId, courseId);
+                results.add(new EnrollmentResult(courseId, true, null));
+            } catch (BusinessLogicException e) {
+                results.add(new EnrollmentResult(courseId, false, e.getMessage()));
+            }
+        }
+
+        return results;
     }
 
     public Enrollment cancelEnrollment(Long studentId, Long courseId) {

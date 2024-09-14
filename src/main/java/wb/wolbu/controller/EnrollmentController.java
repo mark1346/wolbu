@@ -7,6 +7,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import wb.wolbu.dto.EnrollmentDTO;
 import wb.wolbu.dto.EnrollmentRequest;
+import wb.wolbu.dto.EnrollmentResult;
+import wb.wolbu.dto.MultiCourseEnrollmentRequest;
 import wb.wolbu.entity.Enrollment;
 import wb.wolbu.service.EnrollmentService;
 
@@ -24,6 +26,12 @@ public class EnrollmentController {
     public ResponseEntity<EnrollmentDTO> enrollCourse(@RequestBody @Valid EnrollmentRequest request){
         Enrollment enrollment = enrollmentService.enrollCourse(request.getStudentId(), request.getCourseId());
         return new ResponseEntity<>(EnrollmentDTO.from(enrollment), HttpStatus.CREATED);
+    }
+
+    @PostMapping("/multiple")
+    public ResponseEntity<List<EnrollmentResult>> enrollMultipleCourses(@RequestBody @Valid MultiCourseEnrollmentRequest request){
+        List<EnrollmentResult> results = enrollmentService.enrollMultipleCourses(request.getStudentId(), request.getCourseIds());
+        return new ResponseEntity<>(results, HttpStatus.CREATED);
     }
 
     @DeleteMapping

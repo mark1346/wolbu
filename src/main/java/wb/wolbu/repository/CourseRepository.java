@@ -1,14 +1,18 @@
 package wb.wolbu.repository;
 
+import jakarta.persistence.LockModeType;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import wb.wolbu.entity.Course;
 import wb.wolbu.entity.Member;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface CourseRepository extends JpaRepository<Course, Long> {
@@ -23,4 +27,8 @@ public interface CourseRepository extends JpaRepository<Course, Long> {
     Page<Course> findAllOrderByEnrollmentRateDesc(Pageable pageable);
 
     List<Course> findByInstructor(Member instructor);
+
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
+    @Query("SELECT c FROM Course c WHERE c.id = :id")
+    Optional<Course> findByIdWithPessimisticLock(@Param("id") Long id);
 }

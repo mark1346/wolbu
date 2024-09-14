@@ -16,6 +16,10 @@ spring:
         dialect: org.hibernate.dialect.H2Dialect
         default_batch_fetch_size: 100
 
+openai:
+  api:
+    key: put-your-key-here
+
 logging:
   level:
     org.hibernate.SQL: debug

@@ -11,8 +11,10 @@ import wb.wolbu.dto.CreateCourseRequest;
 import wb.wolbu.dto.UpdateCourseRequest;
 import wb.wolbu.entity.Course;
 import wb.wolbu.service.CourseService;
+import wb.wolbu.service.GptService;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @RestController
@@ -20,6 +22,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class CourseController {
     private final CourseService courseService;
+    private final GptService gptService;
 
     @PostMapping
     public ResponseEntity<CourseDTO> createCourse(@RequestBody @Valid CreateCourseRequest request){
@@ -67,5 +70,16 @@ public class CourseController {
     public ResponseEntity<Void> deleteCourse(@PathVariable Long id){
         courseService.deleteCourse(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("recommend")
+    public ResponseEntity<String> recommendCourse(@RequestBody Map<String, String> request){
+        String userGoal = request.get("userGoal");
+        if (userGoal == null || userGoal.isEmpty()) {
+            return ResponseEntity.badRequest().body("사용자 목표를 입력해주세요.");
+        }
+
+        String recommendation = gptService.getCourseRecommendation(userGoal);
+        return ResponseEntity.ok(recommendation);
     }
 }

@@ -43,6 +43,9 @@ java -jar build/libs/wolbu-0.0.1-SNAPSHOT.jar
 - 필요한 경우, application.yml 파일에서 데이터베이스 설정을 변경할 수 있습니다.
 - 현재 콘솔경로는 /h2 이며, url은 jdbc:h2:mem:test 입니다.
 
+## 아키텍쳐
+![2024-09-15_21-03-25](https://github.com/user-attachments/assets/ba941cf4-a51a-4b09-9741-7656480587b2)
+
   
 # 주요 기능
 ### 1. 회원 가입
@@ -57,7 +60,7 @@ java -jar build/libs/wolbu-0.0.1-SNAPSHOT.jar
 - 최근 등록순, 신청자 많은 순, 신청률 높은 순으로 강의 목록을 정렬할 수 있습니다.
 - 한 번에 여러 강의를 동시에 신청할 수 있습니다. 
 ### 부하처리 (동시성 제어)
-- 수강신청 시 발생할 수 있는 동시성 문제를 해결하기 위해 비관적 락(Pessimistic Lock)을 사용했습니다.
+- 수강신청 시 발생할 수 있는 동시성 문제를 해결하기 위해 **비관적 락(Pessimistic Lock)**을 사용했습니다.
 - Course 조회 시 비관적 락을 통해 설정된 최대 수강 인원만큼만 선착순으로 신청처리됩니다. (test/java/wb/wolbu/integration/ConcurrencyTest 참고)
 
 ## 추가 기능
@@ -66,6 +69,7 @@ java -jar build/libs/wolbu-0.0.1-SNAPSHOT.jar
   - 강사별 강의 목록 조회, 학생/강사별 수강 목록 조회 등
 ### 2. LLM을 활용한 월부 강좌 추천 기능
 - 사용자의 상황과 목표에 기반한 개인화된 강의 추천 제공
+- 어떤 강좌를 들을지 고민하는 사용자들을 위한 *일대일 월부 컨설턴트* 서비스!
 - 현재 OpenAI API 사용중이나, 추후 월부 시스템과 통합 가능
 ```
   - 사용자입력: '저는 31살 직장인입니다. 현재 모아둔 돈은 1억 정도입니다. 은퇴한 후엔, 주식 배당금으로 생활하고 싶어요.'
